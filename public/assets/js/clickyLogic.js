@@ -14,7 +14,7 @@ $("#createStory").on("click", function(){
   
     //This Works!!!!
     //We are getting an object for the database
-    // console.log(newStory);
+    console.log(newStory);
 
     //Ajax call here:
     $.ajax({
