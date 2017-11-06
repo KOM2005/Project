@@ -13,12 +13,22 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 len: [1]
             }
-        },        
+        },
         lineSelected: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             len: [1]
         },
+        lineVotedOn: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            default: false
+        },
+        lineVoteCount: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            default: 0
+        }
 
         // createdAt: Sequelize.DATE,
         // updatedAt: Sequelize.DATE,
@@ -27,17 +37,17 @@ module.exports = function(sequelize, DataTypes) {
     Line.associate = function(models) {
         // We're saying that a Line belongs to a Story
         // A Line cannot be created without a Story because of fk contstraint
-        Line.belongsTo(models.Story, {            
+        Line.belongsTo(models.Story, {
             foreignKey: {
                 allowNull: false
             }
         });
-        
+
 
         //TODO::ROBERTTT!!!!!!
         // Line.belongsTo(models.User, {
         //     foreignKey: {
-        //         allowNull:false
+        //         allowNull: false
         //     }
         // });
     };

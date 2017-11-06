@@ -3,17 +3,42 @@ var express = require("express");
 var exphbs = require("express-handlebars");
 var bodyParser = require("body-parser");
 var passport = require('passport');
-var Strategy = require('passport-twitter').Strategy;
 
-passport.use(new Strategy({
-        consumerKey: './config/config.twitterKeys.CONSUMER_KEY',
-        consumerSecret: './config/config.twitterKeys.CONSUMER_SECRET',
-        callbackURL: 'http://127.0.0.1:3000/login/twitter/return'
+var TwitterStrategy = require('passport-twitter').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
+var RedditStrategy = require('passport-reddit').Strategy;
+
+//Twitter strat
+passport.use(new TwitterStrategy({
+        consumerKey: 'aI0LlGbbkANCJj3RkS08mTC2f',
+        consumerSecret: 'ggEYwryfDm7kGW5obxAUm3eufouK3RtuRZ4DMi2hBCYGTuzGEZ',
+        callbackURL: 'http://localhost:8080/twitter/return'
+
     },
     function(token, tokenSecret, profile, cb) {
+        // User.findOrCreate({ twitterId: profile.id }, function(err, user) {
+        //     return cb(err);
+        //     this.redirect()
+        this.redirect('/'); /*this needs to re-direct to the correct page but for now it routes back to home*/
+        // });
+    }
+));
+// console.log()
+passport.use(new FacebookStrategy({
+        clientID: '143546596268969',
+        clientSecret: '558778b491ff119cb794d9fcd5965aa0',
+        callbackURL: 'http://localhost:8080/auth/facebook/callback'
+    },
+    function(accessToken, refreshToken, profile, done) {
+        //     if (err) { return done(err); }
+        //     User.findOrCreate({ facebookId: profile.id }, (err, user) => {
+        //     done(null, user);
+        // });
+        this.redirect('/');
+    }
+));
 
-        return cb(null, profile);
-    }));
+
 
 
 passport.serializeUser(function(user, cb) {
@@ -23,6 +48,8 @@ passport.serializeUser(function(user, cb) {
 passport.deserializeUser(function(obj, cb) {
     cb(null, obj);
 });
+
+
 
 
 
@@ -61,13 +88,14 @@ app.use(express.static("public"));
 // Routes
 // =============================================================
 require("./routes/html-routes.js")(app);
-require("./routes/storyApiRoutes.js")(app); // TODO make real routes
-// require("./routes/author-api-routes.js")(app); // TODO make real routes
+require("./routes/storyApiRoutes.js")(app);
+require("./routes/lineApiRoutes.js")(app);
+require("./routes/genreApiSearchRoute.js")(app);
 require("./routes/logins")(app);
 
 // Syncing our sequelize models and then starting our Express app
 // =============================================================
-db.sequelize.sync({ force: true }).then(function() {
+db.sequelize.sync({ force: false }).then(function() {
     app.listen(PORT, function() {
         console.log("App listening on PORT " + PORT);
     });
