@@ -3,10 +3,13 @@ var express = require("express");
 var exphbs = require("express-handlebars");
 var bodyParser = require("body-parser");
 var passport = require('passport');
+var crypto = require('crypto');
 
 var TwitterStrategy = require('passport-twitter').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var RedditStrategy = require('passport-reddit').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuthStrategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 //Twitter strat
 passport.use(new TwitterStrategy({
@@ -18,7 +21,7 @@ passport.use(new TwitterStrategy({
     function(token, tokenSecret, profile, cb) {
         // User.findOrCreate({ twitterId: profile.id }, function(err, user) {
         //     return cb(err);
-        //     this.redirect()
+
         this.redirect('/'); /*this needs to re-direct to the correct page but for now it routes back to home*/
         // });
     }
@@ -35,6 +38,35 @@ passport.use(new FacebookStrategy({
         //     done(null, user);
         // });
         this.redirect('/');
+    }
+));
+
+passport.use(new RedditStrategy({
+        clientID: 'A-_bBpq2-Q7RBg',
+        clientSecret: 'D52frJChsu2sbr3RUS3TKWBsAFs',
+        callbackURL: "http://localhost:8080/auth/reddit/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+        // User.findOrCreate({ redditId: profile.id }, function(err, user) {
+        //     return done(err, user);
+        // });
+        this.redirect('/');
+    }
+));
+
+
+
+passport.use(new GoogleStrategy({
+        clientID: '975477224458-fvreqnf88mijr6nt29lhjsjahjqf0b9k.apps.googleusercontent.com',
+        clientSecret: 'GuhqDBsS8kRJgTa4cdM9nNob',
+        callbackURL: "http://localhost:8080/auth/google/callback"
+    },
+    function(token, tokenSecret, profile, done) {
+        // User.findOrCreate({ googleId: profile.id }, function(err, user) {
+        //     return done(err, user);
+
+        // });
+        // this.redirect('/');
     }
 ));
 
@@ -91,6 +123,9 @@ require("./routes/html-routes.js")(app);
 require("./routes/storyApiRoutes.js")(app);
 require("./routes/lineApiRoutes.js")(app);
 require("./routes/genreApiSearchRoute.js")(app);
+
+// require("./routes/author-api-routes.js")(app); // TODO make real routes
+
 require("./routes/logins")(app);
 
 // Syncing our sequelize models and then starting our Express app
