@@ -1,5 +1,19 @@
 $(document).ready(function(){
 
+    
+    $(".updateStoryStatus").on("click", function(){
+        event.preventDefault();
+
+        let thisId = $(this).attr('storyId');
+
+        $.ajax({
+            type: "PUT", 
+            url: "/api/story/" + thisId + "/updateStoryStatus",
+            success: `Successfully kicked off a story status check for story ID: '${thisId}'`
+        });
+
+    });
+    
     //Submit new story logic
     $("#createStory").on("click", function(){
         event.preventDefault();
@@ -9,12 +23,12 @@ $(document).ready(function(){
             genre: $("#createStoryGenre").val(),
             openWriting: $("#openWritingToOthers").val(),
             openVoting: $("#openVotingToOthers").val(),
-            visible: $("#visibleToPublic").val(),
             minimumNumberOfVoters: $("#minimumNumberOfVoters").val(),
             minimumNumberOfWriters: $("#minimumNumberOfWriters").val(),
             scheduleActive: $("#scheduleActive").val(),
             writingTimePeriodInMins: $("#writingTimePeriodInMins").val(),
-            votingTimePeriodInMins: $("#votingTimePeriodInMins").val()
+            votingTimePeriodInMins: $("#votingTimePeriodInMins").val(),
+            visible: $("#visibleToPublic").val()
         }
   
         //This Works!!!!
@@ -41,12 +55,13 @@ $(document).ready(function(){
         genre: $("#createStoryGenre").val("");
         openWriting: $("#openWritingToOthers").val("");
         openVoting: $("#openVotingToOthers").val("");
-        visible: $("#visibleToPublic").val("");
         minimumNumberOfVoters: $("#minimumNumberOfVoters").val("");
         minimumNumberOfWriters: $("#minimumNumberOfWriters").val("");
         scheduleActive: $("#scheduleActive").val("");
         writingTimePeriodInMins: $("#writingTimePeriodInMins").val("");
-        votingTimePeriodInMins: $("#votingTimePeriodInMins").val("")
+        votingTimePeriodInMins: $("#votingTimePeriodInMins").val("");
+        visible: $("#visibleToPublic").val("")
+        
     })
 
     //Update Story Click Function
@@ -58,12 +73,12 @@ $(document).ready(function(){
             genre: $("#createStoryGenre").val(),
             openWriting: $("#openWritingToOthers").val(),
             openVoting: $("#openVotingToOthers").val(),
-            visible: $("#visibleToPublic").val(),
             minimumNumberOfVoters: $("#minimumNumberOfVoters").val(),
             minimumNumberOfWriters: $("#minimumNumberOfWriters").val(),
             scheduleActive: $("#scheduleActive").val(),
             writingTimePeriodInMins: $("#writingTimePeriodInMins").val(),
-            votingTimePeriodInMins: $("#votingTimePeriodInMins").val()
+            votingTimePeriodInMins: $("#votingTimePeriodInMins").val(),
+            visible: $("#visibleToPublic").val()
         }
 
         //Ajax call here to update story:
@@ -100,23 +115,26 @@ $(document).ready(function(){
         })
     })
 
-    $(".yesVote").on("click", function(){
-        console.log(`clicked: yes vote for panel` + $(this).attr('targetId'));
-        let target = 'panel' + $(this).attr('targetId');
-        let id = $(this).attr('targetId');
+    //Clear form HERE...
 
-        // Hide the target panel (we're done with voting for this one)
-        $("#"+target).css('display', 'none');
 
-        // TODO Add a vote for that target line
-        $.ajax({
-            url: `/api/line/${id}/voteYes`,
-            type: 'PUT',
-            success: function(result) {
-                console.log(`successfully posted a yes vote for line id: ${id}`);
-            }
-        });
-    });
+$(".yesVote").on("click", function(){
+    console.log(`clicked: yes vote for panel` + $(this).attr('targetId'));
+    let target = 'panel' + $(this).attr('targetId');
+    let id = $(this).attr('targetId');
+
+    // Hide the target panel (we're done with voting for this one)
+    $("#"+target).css('display', 'none');
+
+    // TODO Add a vote for that target line
+    $.ajax({
+        url: `/api/line/${id}/voteYes`,
+        type: 'PUT',
+        success: function(result) {
+            console.log(`successfully posted a yes vote for id: ${id}`);
+        }
+    }) 
+}); 
 
     $(".noVote").on("click", function(){
         console.log(`clicked: no vote for panel` + $(this).attr('targetId'));
@@ -148,5 +166,38 @@ $(document).ready(function(){
         //Clear form values
         title: $("#storyBody").val("");
     });
+
+    //Submit Line Logic
+    $("#lineSubmission").on("click", function(){
+        event.preventDefault();
+        // let lineToSubmit = $("#writeLineHere").val();
+        var lineToSubmit = {
+            lineBody: $("#writeLineHere").val()
+        }
+
+        var id = $(this).attr('thisStoryId');
+        var currentLineGroup = $(this).attr('thisLineGroup');
+        // console.log(lineToSubmit)
+        
+        $.ajax({
+            type: "POST",
+            url: `/api/story/${id}/${currentLineGroup}`, 
+            data: JSON.stringify(lineToSubmit),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: 
+                console.log("YAY!!!")            
+        })    
+    })
+
+    
+
+
+
+
+
+
+
+
 
 })//End of document.ready 
